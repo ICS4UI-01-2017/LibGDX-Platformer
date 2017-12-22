@@ -56,13 +56,16 @@ public class MainGame implements Screen{
         this.batch = game.getBatch();
         
         // set up the camera and view
-        this.camera = new OrthographicCamera(WIDTH, HEIGHT);
-        this.view = new FitViewport(WIDTH, HEIGHT, camera);
-        view.apply();
+        this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        
         // move the camera to the center
         this.camera.position.set(WIDTH/2, HEIGHT/2, 0);
         // make sure to apply the changes
         this.camera.update();
+        
+        this.view = new FitViewport(WIDTH, HEIGHT, camera);
+        view.apply();
+        
         
     }
     
@@ -87,15 +90,20 @@ public class MainGame implements Screen{
         // clears the screen in a black colour
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-	
+        
+        // move the camera with the player...
+        if(p1.getX() > 200){
+            camera.position.x = p1.getX();
+        }else{
+            camera.position.x = 200;
+        }
+        
         // ask the world to render
         // notice this is not in the SpriteBatch
         // This is because it uses its own ShapeRenderer
         world.render(camera);
         
-        if(p1.getX() > 200){
-            camera.position.x = p1.getX();
-        }
+        
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         // ask the SpriteBatch to start taking notes of what to draw
@@ -109,7 +117,7 @@ public class MainGame implements Screen{
     // used when the window is resized.... we haven't use it here
     @Override
     public void resize(int width, int height) {
-        
+        view.update(width, height);
     }
 
     // if the game could pause, what do you need to happen?
